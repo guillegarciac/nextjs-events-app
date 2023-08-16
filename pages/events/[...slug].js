@@ -7,19 +7,23 @@ export default function FilteredEventsPage() {
   const router = useRouter();
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState(null); 
 
   const filterData = router.query.slug;
 
   useEffect(() => {
     if (!filterData) {
-      return; // Don't fetch if the filterData isn't ready yet.
+      setErrorMessage("Loading...");
+      return;
     }
 
-    const year = +filterData[0]; // Convert string to number
+    const year = +filterData[0];
     const month = +filterData[1];
 
-    if (isNaN(year) || isNaN(month) || month < 1 || month > 12) {
-      return; // Invalid year or month, so return early
+    if (isNaN(year) || isNaN(month) || year > 2030 || year < 2020 || month < 1 || month > 12) {
+      setLoading(false);
+      setErrorMessage("Invalid Filter. Please adjust your values.");
+      return;
     }
 
     async function fetchFilteredEvents() {
@@ -27,6 +31,7 @@ export default function FilteredEventsPage() {
         const events = await getFilteredEvents({ year, month });
         setFilteredEvents(events);
         setLoading(false);
+        setErrorMessage(null); // Reset the error message if successful
       } catch (error) {
         console.error("Error fetching filtered events:", error);
         setLoading(false);
@@ -35,6 +40,10 @@ export default function FilteredEventsPage() {
 
     fetchFilteredEvents();
   }, [filterData]);
+
+  if (errorMessage) {
+    return <p>{errorMessage}</p>;
+  }
 
   if (loading) {
     return <p>Loading...</p>;
