@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { getAllEvents } from '../../services/eventService';
 import EventList from '../../components/events/event-list';
+import EventsSearch from '../../components/events/events-search';
 
 export default function AllEventsPage() {
   const [allEvents, setAllEvents] = useState([]);
@@ -15,8 +16,9 @@ export default function AllEventsPage() {
   }, []);
 
   return (
-    <div>
+    <Fragment>
+    <EventsSearch />
       <EventList items={allEvents} />
-    </div>
+    </Fragment>
   )
 }
