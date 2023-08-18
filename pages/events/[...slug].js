@@ -2,12 +2,14 @@ import { Fragment, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { getFilteredEvents } from '../../services/eventService';
 import EventList from '../../components/events/event-list';
+import ResultsTitle from '../../components/events/results-title';
+import Button from '../../components/ui/button';
 
 export default function FilteredEventsPage() {
   const router = useRouter();
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState(null); 
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const filterData = router.query.slug;
 
@@ -35,6 +37,7 @@ export default function FilteredEventsPage() {
       } catch (error) {
         console.error("Error fetching filtered events:", error);
         setLoading(false);
+        setErrorMessage("Error fetching events. Please try again later.");
       }
     }
 
@@ -42,20 +45,39 @@ export default function FilteredEventsPage() {
   }, [filterData]);
 
   if (errorMessage) {
-    return <p>{errorMessage}</p>;
+    return (
+      <Fragment>
+        <p style={{ color: 'red' }}>{errorMessage}</p>
+        <Button link="/events">Show All Events</Button>
+      </Fragment>
+    );
   }
 
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <Fragment>
+        <p style={{ color: 'green' }}>Loading...</p>
+        <Button link="/events">Show All Events</Button>
+      </Fragment>
+    );
   }
 
   if (!filteredEvents || filteredEvents.length === 0) {
-    return <p>No events found for the chosen filter!</p>;
+    return (
+      <Fragment>
+        <p style={{ color: 'red' }}>No events found for the chosen filter!</p>
+        <Button link="/events">Show All Events</Button>
+      </Fragment>
+    );
   }
+
+  const date = new Date(filteredEvents[0].date);
+  console.log(filteredEvents[0]);
 
   return (
     <Fragment>
+      <ResultsTitle date={date} />
       <EventList items={filteredEvents} />  
     </Fragment>
-  )
+  );
 }
