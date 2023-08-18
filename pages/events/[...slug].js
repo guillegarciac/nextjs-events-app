@@ -5,6 +5,7 @@ import EventList from '../../components/events/event-list';
 import ResultsTitle from '../../components/events/results-title';
 import Button from '../../components/ui/button';
 import PuffLoader from "react-spinners/PuffLoader";
+import ErrorAlert from '../../components/ui/error-alert';
 
 export default function FilteredEventsPage() {
   const router = useRouter();
@@ -36,7 +37,6 @@ export default function FilteredEventsPage() {
           setFilteredEvents(events);
           setLoading(false);
         } catch (error) {
-          console.error("Error fetching filtered events:", error);
           setLoading(false);
           setErrorMessage("Error fetching events. Please try again later.");
         }
@@ -59,7 +59,7 @@ export default function FilteredEventsPage() {
   if (errorMessage) {
     return (
       <Fragment>
-        <p style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>{errorMessage}</p>
+        <ErrorAlert>{errorMessage}</ErrorAlert>
         <Button link="/events">Show All Events</Button>
       </Fragment>
     );
@@ -68,7 +68,7 @@ export default function FilteredEventsPage() {
   if (!filteredEvents || filteredEvents.length === 0) {
     return (
       <Fragment>
-        <p style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>No events found for the chosen filter!</p>
+        <ErrorAlert>No events found for the chosen filter!</ErrorAlert>
         <Button link="/events">Show All Events</Button>
       </Fragment>
     );

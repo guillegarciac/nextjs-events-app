@@ -5,30 +5,47 @@ import { getEventById } from '../../services/eventService';
 import EventSummary from '../../components/event-detail/event-summary';
 import EventLogistics from '../../components/event-detail/event-logistics';
 import EventContent from '../../components/event-detail/event-content';
+import ErrorAlert from '../../components/ui/error-alert';
+import PuffLoader from "react-spinners/PuffLoader";
 
 export default function EventDetailPage() {
   const router = useRouter();
   const { eventId } = router.query;
   const [event, setEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch the event data when the eventId is available in the query parameters
-    if (eventId) {
-      getEventById(eventId)
-        .then((eventData) => {
-          setEvent(eventData);
-        })
-        .catch((error) => {
-          // Handle errors or show a not-found page
-          console.error('Error fetching event:', error);
-          setEvent(null);
-        });
-    }
+    const timer = setTimeout(() => {
+      if (eventId) {
+        getEventById(eventId)
+          .then((eventData) => {
+            setEvent(eventData);
+            setLoading(false);
+          })
+          .catch((error) => {
+            setEvent(null);
+            setLoading(false);
+          });
+      }
+    }, 3000);
+
+    return () => clearTimeout(timer);
   }, [eventId]);
 
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
+        <PuffLoader color={"#03be9f"} size={100} />
+      </div>
+    );
+  }
+
   if (!event) {
-    // You can show a loading spinner or a not-found page while the data is being fetched
-    return <div>Loading...</div>;
+    return (
+      <ErrorAlert>
+        <p>Event not found.</p>
+      </ErrorAlert>
+    );
   }
 
   return (

@@ -24,7 +24,7 @@ export default function AllEventsPage() {
 
   return (
     <Fragment>
-    <EventsSearch onSearch={findEventsHandler}/>
+      <EventsSearch onSearch={findEventsHandler}/>
       <EventList items={allEvents} />
     </Fragment>
   )
