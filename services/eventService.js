@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api', // Assuming '/api' is the base URL for all event-related endpoints
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api',
 });
 
 export async function getFeaturedEvents() {
